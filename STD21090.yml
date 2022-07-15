@@ -1,0 +1,192 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: STD21090
+  description: test of api
+  termsOfService: terms
+  contact:
+    name: Jonathan
+    email: hei.jonatana@gmail.com
+paths:
+  /student:
+    description: Student Ressource
+    get: 
+      description: opetation fetch data
+      parameters:
+        - in: query
+          name: studentname
+          required: true
+          schema:
+           $ref: "#/definition/schemas/Student"
+      responses:
+        200:
+          description: Succes response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                 $ref: '#/definition/schemas/Student'
+        404:
+          description: PAGE NOT FOUND
+    post:
+        description: Add new Student
+        responses:
+          201:
+            description: post saved
+        
+  /courses/{id}:
+    description: course by ID
+    get:
+      description: Specified course
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        200: 
+          description: course
+        403:
+          description: Bad request
+    post:
+      tags: 
+      - "courses"
+      summary: "having new course"
+      description: ""
+      parameters:
+      - in: "path"
+        name: "id"
+        description: "Having more information about student"
+        required: true
+        schema :
+          type : string
+      responses:
+        400:
+          description: "Invalid ID supplied"
+        404:
+          description: "Student not found"
+        405:
+          description: "Validation exception"
+  /courses:
+    get:
+      tags:
+      - "Courses"
+      summary: "List of all courses"
+      description: "Get all courses"
+    
+      parameters: []
+      responses:
+        405:
+          description: "Invalid input" 
+        200:
+          description: "List of all courses"
+        401:
+          description: "Unauthorized"
+        403:
+          description: "Forbidden"
+  /student{id}/all:
+      get:
+        description: You will have all about
+        parameters:
+        - name: "id"
+          in: "path"
+          required: true
+          schema:
+            type: "string"
+        responses:
+          200:
+            description: "successful operation"
+          403:
+            description: "Forbidden"
+          400:
+            description: "Invalid username or id supplied"
+          404:
+            description: "User not found"
+      put:
+        tags:
+        - "Student"
+        summary: "Updated Student"
+        description: "This can only be done by the logged in user."
+        operationId: "UpdateUser"
+        parameters:
+        - name: "id"
+          in: "path"
+          description: "username that need to be update"
+          required: true
+          schema:
+            type: "string"
+        responses:
+            400:
+              description: "Invalid Student supplied"
+            404:
+              description: "Student not fount"
+      delete:
+        tags:
+        - "Admin"
+        summary: "Delete one student"
+        description: "This can only be done by the logged in user."
+        operationId: "DeleteUser"
+        parameters:
+        - name : "id"
+          in: "path"
+          description: "The student that needs to be removed"
+          required: true
+          schema:
+            type: "string"
+        responses:
+          "400":
+            description: "Invalid username supplied"
+          404:
+            description: "Student not found"
+          403:
+            description: "bad request"
+definition:
+  schemas:
+    CreateStudent:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "Rakoto"
+        birth_date:
+          type: string
+          format: date
+          example: "2022-01-01"
+    Student:
+      allOf:
+        - $ref: '#/definition/schemas/CreateStudent'
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 10
+    CreateCourses:
+      type: object
+      proprieties:
+        name: string
+        teacher: string
+        createdDatetime: string
+        format: date
+      courses:
+         - $ref: '#/definition/schemas/CreateCourses'
+    courses:
+      type: object
+      proprieties:
+        name: string
+        teacher: string
+        courses:
+         - $ref: '#/definition/schemas/courses'
+
+          
+security:
+  - api_key:
+      type: "api_key"
+      name: "api_key"
+      in: "header"
+      
+externalDocs:
+    description: "Find out more about Swagger"
+    url: "http://swagger.io"      
+            
