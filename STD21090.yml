@@ -60,11 +60,11 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/NotAuthorizedException'  
+                  $ref: '#/components/schemas/NotAuthorizedException'
     post:
       tags:
         - courses
-      summary: having new course
+      summary: Post new course
       description: ''
       parameters:
         - in: path
@@ -120,9 +120,9 @@ paths:
           application/json:
             example:
               items:
-              - $ref: '#/definition/schemas/courses'
+                - $ref: '#/definition/schemas/courses'
       responses:
-        200:
+        '200':
           description: Courses aded
         '403':
           description: Not authorized
@@ -132,8 +132,7 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/NotAuthorizedException'
-              
-  /student{id}/all:
+  /student{id}:
     get:
       description: You will have all about
       parameters:
@@ -175,8 +174,35 @@ paths:
           description: username that need to be update
           required: true
           schema:
+            type: array
+            items:
+              $ref: '#/definition/schemas/Student'
+      responses:
+        '400':
+          description: Invalid Student supplied
+        '404':
+          description: Student not found
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ResourceNotFoundException'
+    patch:
+      tags:
+        - Student
+      summary: Updated Student information
+      description: You can update you own information here
+      parameters:
+        - name: id
+          in: path
+          description: username that need to be update
+          required: true
+          schema:
             type: string
       responses:
+        '200':
+          description: successful operation
         '400':
           description: Invalid Student supplied
         '404':
@@ -189,7 +215,7 @@ paths:
                   $ref: '#/components/schemas/ResourceNotFoundException'
     delete:
       tags:
-        - Admin
+        - Student
       summary: Reject one student
       description: This can only be done by admin.
       operationId: reject student
@@ -201,7 +227,9 @@ paths:
           schema:
             type: string
       responses:
-        403:
+        '200':
+          description: Student rejected
+        '403':
           description: No authorized
           content:
             application/json:
@@ -209,7 +237,7 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/NotAuthorizedException'
-        404:
+        '404':
           description: Student not found
           content:
             application/json:
@@ -217,10 +245,6 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/ResourceNotFoundException'
-    security:
-      - BearerAuth: [ ]
-
-
 definition:
   schemas:
     CreateStudent:
@@ -278,8 +302,6 @@ definition:
     BearerAuth:
       type: http
       scheme: bearer
-      
-      
 components:
   schemas:
     Whoami:
@@ -378,7 +400,9 @@ components:
         - $ref: '#/definition/schemas/Exception'
       example:
         type: ResourceNotFoundException
-        message: Resource of type <T> identified by <I> not found
+        message: Ressources not found or corrupt id
 externalDocs:
   description: Find out more about Swagger
   url: http://swagger.io
+servers:
+  - url: https://app.swaggerhub.com/apis/Jonas4884/testAPI/1.0.0
