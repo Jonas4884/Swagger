@@ -1,0 +1,718 @@
+---
+openapi: 3.0.1
+info:
+  title: STD21090-TD2
+  description: TD2
+  termsOfService: http://swagger.io/terms/
+  contact:
+    email: apiteam@swagger.io
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.0-oas3
+externalDocs:
+  description: Find out more about Swagger
+  url: http://swagger.io
+servers:
+- url: https://app.swaggerhub.com/apis/Jonas4884/TD2-swagger/1.0.0-oas3
+  description: SwaggerHub API
+tags:
+- name: Room
+- name: Film
+- name: Projection
+- name: Category
+paths:
+  /rooms:
+    get:
+      tags:
+      - Room
+      summary: Get all Rooms
+      operationId: getRooms
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Room'
+        "400":
+          description: Error
+          content: {}
+  /rooms/{id}:
+    get:
+      tags:
+      - Room
+      summary: get the room by its identifier
+      operationId: getRoom
+      parameters:
+      - name: id
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Room'
+    patch:
+      tags:
+      - Room
+      summary: performs update on room_capacity
+      parameters:
+      - name: id
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+            examples:
+              changeCapacity:
+                value:
+                  capacity: 30
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Room'
+  /films:
+    get:
+      tags:
+      - Film
+      summary: Get all Films
+      operationId: getFilms
+      parameters:
+      - name: page_Size
+        in: query
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: integer
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Film'
+        "400":
+          description: Error
+          content: {}
+    delete:
+      tags:
+      - Film
+      summary: deletes many films
+      requestBody:
+        description: List of film_id you wish to delete
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/films_body'
+      responses:
+        "200":
+          description: Success
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: Returns a list of deleted films id
+        "400":
+          description: Error
+          content: {}
+  /films/{id}:
+    get:
+      tags:
+      - Film
+      summary: get a film by its id
+      operationId: getFilm
+      parameters:
+      - name: id
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Film'
+        "400":
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestException'
+        "404":
+          description: film not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceNotFoundException'
+    put:
+      tags:
+      - Film
+      summary: modify entirely a film except its id
+      parameters:
+      - name: id
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      requestBody:
+        description: new film
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewFilm'
+        required: true
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Film'
+        "400":
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestException'
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotAuthorizedException'
+    post:
+      tags:
+      - Film
+      summary: creates a new film
+      parameters:
+      - name: id
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      requestBody:
+        description: new film
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewFilm'
+      responses:
+        "200":
+          description: Film created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Film'
+        "400":
+          description: Error
+          content: {}
+    delete:
+      tags:
+      - Film
+      summary: deletes a film by giving its id
+      parameters:
+      - name: id
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      responses:
+        "200":
+          description: Success
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: Returns the id of the deleted film
+        "400":
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestException'
+    patch:
+      tags:
+      - Film
+      description: |
+        performs update on at most 4 of these per update
+         * Title
+         * Duration
+         * summary
+         * director
+         * date
+      parameters:
+      - name: id
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+            examples:
+              changeTitle:
+                value:
+                  Title: string
+              changeTitleAndDirector:
+                value:
+                  Title: string
+                  director: string
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Film'
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotAuthorizedException'
+  /categories:
+    get:
+      tags:
+      - Category
+      summary: returns category list or a category if name is given
+      operationId: getCategories
+      parameters:
+      - name: name
+        in: query
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: marvel
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Category'
+    post:
+      tags:
+      - Category
+      summary: creates a new category
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewCategory'
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Category'
+    delete:
+      tags:
+      - Category
+      summary: deletes a category by giving its name
+      parameters:
+      - name: name
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Success
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: Returns the name of the deleted category
+        "400":
+          description: Error
+          content: {}
+    patch:
+      tags:
+      - Category
+      description: adds new film to the category's film list
+      parameters:
+      - name: name
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: marvel
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: object
+            examples:
+              AddFilm:
+                summary: add Films
+                value:
+                - film_id: 5
+                - film_id: 6
+        required: true
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Category'
+  /projections:
+    get:
+      tags:
+      - Projection
+      summary: Get all projections
+      operationId: getProjections
+      parameters:
+      - name: page_Size
+        in: query
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: integer
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Projection'
+        "400":
+          description: Error
+          content: {}
+    delete:
+      tags:
+      - Projection
+      summary: deletes many Projections
+      requestBody:
+        description: List of projection_id you wish to delete
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/projections_body'
+      responses:
+        "200":
+          description: Success
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: Returns a list of deleted projections id
+        "400":
+          description: Error
+          content: {}
+  /projections/{id}:
+    get:
+      tags:
+      - Projection
+      summary: get the projection by its id
+      operationId: getProjection
+      parameters:
+      - name: id
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Projection'
+        "400":
+          description: Error
+          content: {}
+    put:
+      tags:
+      - Projection
+      summary: allows you to modify projection data except id
+      parameters:
+      - name: id
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      requestBody:
+        description: new projection
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewProjection'
+        required: true
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Projection'
+        "400":
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestException'
+    post:
+      tags:
+      - Projection
+      summary: creates a new Projection
+      parameters:
+      - name: id
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      requestBody:
+        description: new film
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewProjection'
+        required: true
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Projection'
+        "400":
+          description: Error
+          content: {}
+    delete:
+      tags:
+      - Projection
+      summary: deletes a projection by giving its id
+      parameters:
+      - name: id
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      responses:
+        "200":
+          description: Success
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: Returns the id of the deleted projection
+        "400":
+          description: Error
+          content: {}
+    patch:
+      tags:
+      - Projection
+      summary: partial updates on Projection identified by id
+      description: |
+        Performs updates one or two of these
+          * hour
+          * film_id
+          * room_id
+      parameters:
+      - name: id
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewProjection'
+        required: true
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Projection'
+        "400":
+          description: Error
+          content: {}
+components:
+  schemas:
+    Room:
+      type: object
+      properties:
+        id:
+          type: string
+          enum:
+          - A
+          - B
+        capacity:
+          type: number
+          example: 30
+    NewFilm:
+      type: object
+      properties:
+        title:
+          type: string
+        duration:
+          type: string
+        summary:
+          type: string
+        director:
+          type: string
+        date:
+          type: string
+          format: date
+    Film:
+      type: object
+      properties:
+        id:
+          type: number
+      allOf:
+      - $ref: '#/components/schemas/NewFilm'
+    Category:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        filmList:
+          type: array
+          items:
+            $ref: '#/components/schemas/Film'
+    NewCategory:
+      type: object
+      properties:
+        name:
+          type: string
+          example: thriller
+        filmList:
+          type: array
+          items:
+            $ref: '#/components/schemas/NewCategory_filmList'
+    NewProjection:
+      type: object
+      properties:
+        hour:
+          type: string
+          format: date-time
+        film_id:
+          type: string
+        room_id:
+          type: string
+          enum:
+          - A
+          - B
+    Projection:
+      type: object
+      properties:
+        projection_id:
+          type: number
+          example: 1
+      allOf:
+      - $ref: '#/components/schemas/Film'
+      - $ref: '#/components/schemas/Room'
+    Exception:
+      type: object
+      properties:
+        type:
+          type: string
+        message:
+          type: string
+    BadRequestException:
+      example:
+        type: BadRequestException
+        message: Bad request
+      allOf:
+      - $ref: '#/components/schemas/Exception'
+    NotAuthorizedException:
+      example:
+        type: NotAuthorizedException
+        message: Not authorized
+      allOf:
+      - $ref: '#/components/schemas/Exception'
+    ResourceNotFoundException:
+      example:
+        type: ResourceNotFoundException
+        message: Ressources not found or corrupt id
+      allOf:
+      - $ref: '#/components/schemas/Exception'
+    films_body:
+      type: object
+      properties:
+        film_id:
+          type: integer
+          example: 1
+    projections_body:
+      type: object
+      properties:
+        projection_id:
+          type: integer
+          example: 1
+    NewCategory_filmList:
+      type: object
+      properties:
+        film_id:
+          type: integer
+      example: null
